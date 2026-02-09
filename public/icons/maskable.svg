@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pyatigorsk GO maskable icon">
+  <!-- Maskable icons should avoid transparent edges -->
+  <rect width="512" height="512" fill="#0b1220"/>
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="190" fill="url(#g)"/>
+  <circle cx="256" cy="256" r="120" fill="#0b1220" opacity="0.92"/>
+  <path d="M256 110c57 0 108 31 134 80l-52 20c-16-30-47-48-82-48s-66 18-82 48l-52-20c26-49 77-80 134-80Z" fill="#e2e8f0"/>
+  <path d="M256 402c-57 0-108-31-134-80l52-20c16 30 47 48 82 48s66-18 82-48l52 20c-26 49-77 80-134 80Z" fill="#e2e8f0"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pyatigorsk GO icon">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="#0b1220"/>
+  <circle cx="256" cy="256" r="164" fill="url(#g)" opacity="0.95"/>
+  <circle cx="256" cy="256" r="110" fill="#0b1220" opacity="0.9"/>
+  <path d="M256 92c63 0 121 35 150 90l-46 18c-21-39-60-62-104-62s-83 23-104 62l-46-18c29-55 87-90 150-90Z" fill="#e2e8f0" opacity="0.95"/>
+  <path d="M256 420c-63 0-121-35-150-90l46-18c21 39 60 62 104 62s83-23 104-62l46 18c-29 55-87 90-150 90Z" fill="#e2e8f0" opacity="0.95"/>
+</svg>
