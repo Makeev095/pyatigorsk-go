@@ -3,6 +3,7 @@ import { LANDMARKS } from './data/landmarks'
 import { MapView } from './components/MapView'
 import { NavigationHUD } from './components/NavigationHUD'
 import { CalibrationPrompt } from './components/CalibrationPrompt'
+import { ARCameraView } from './components/ARCameraView'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useDeviceHeading } from './hooks/useDeviceHeading'
 import { bearingDeg, distanceM, formatDistance } from './lib/geo'
@@ -60,6 +61,7 @@ export default function App() {
     pointerId: number
   } | null>(null)
   const [navTargetId, setNavTargetId] = useState<LandmarkId | null>(null)
+  const [arMode, setArMode] = useState<{ landmark: Landmark } | null>(null)
 
   const [progress, setProgress] = useState<PlayerProgress>(() => loadProgress())
   const discoveredIds = useMemo(
@@ -342,6 +344,22 @@ export default function App() {
 
   return (
     <div className="app">
+      {arMode ? (
+        <ARCameraView
+          landmark={arMode.landmark}
+          user={user}
+          headingDeg={headingDeg}
+          accuracyBoostM={accuracyBoostM}
+          onCapture={(lm) => {
+            discover(lm)
+            showToast(`Нарзанник пойман! Открыто: ${lm.name} (+${lm.xp} XP)`)
+            setArMode(null)
+          }}
+          onClose={() => setArMode(null)}
+          showToast={showToast}
+        />
+      ) : null}
+
       <div className="topbar">
         <div className="topbarInner">
           <div className="brand">
@@ -654,22 +672,42 @@ export default function App() {
                           ) : null}
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                         {!discovered ? (
-                          <button
-                            className={`btn ${inRange ? 'btnPrimary' : ''}`}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              if (!inRange) {
-                                const need = lm.radiusM + accuracyBoostM
-                                showToast(`Подойди ближе: нужно ≤ ${need} м`)
-                                return
-                              }
-                              discover(lm)
-                            }}
-                          >
-                            {inRange ? 'Открыть' : user ? `~${formatDistance(distM)}` : 'Далеко'}
-                          </button>
+                          <>
+                            {inRange ? (
+                              <button
+                                className="btn btnPrimary"
+                                onClick={async (e) => {
+                                  e.stopPropagation()
+                                  if (deviceHeading.state.status === 'needs_permission') {
+                                    const ok = await deviceHeading.requestPermission()
+                                    if (!ok) {
+                                      showToast('Для AR нужен компас — разреши доступ к датчикам')
+                                      return
+                                    }
+                                  }
+                                  setArMode({ landmark: lm })
+                                }}
+                              >
+                                Найти Нарзанника
+                              </button>
+                            ) : null}
+                            <button
+                              className={`btn ${inRange ? '' : 'btnPrimary'}`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (!inRange) {
+                                  const need = lm.radiusM + accuracyBoostM
+                                  showToast(`Подойди ближе: нужно ≤ ${need} м`)
+                                  return
+                                }
+                                discover(lm)
+                              }}
+                            >
+                              {inRange ? 'Открыть' : user ? `~${formatDistance(distM)}` : 'Далеко'}
+                            </button>
+                          </>
                         ) : (
                           <button
                             className="btn"
@@ -694,16 +732,38 @@ export default function App() {
                     Цель: <strong>{activeTarget.name}</strong> • {user ? formatDistance(activeTargetDistM) : '—'}
                   </span>
                   {!discoveredIds.has(activeTarget.id) ? (
-                    <button className={`btn ${canDiscoverActiveTarget ? 'btnPrimary' : ''}`} onClick={() => {
-                      if (!canDiscoverActiveTarget) {
-                        const need = activeTarget.radiusM + accuracyBoostM
-                        showToast(`Нужно подойти ближе: ≤ ${need} м`)
-                        return
-                      }
-                      discover(activeTarget)
-                    }}>
-                      Открыть цель
-                    </button>
+                    <>
+                      {canDiscoverActiveTarget ? (
+                        <button
+                          className="btn btnPrimary"
+                          onClick={async () => {
+                            if (deviceHeading.state.status === 'needs_permission') {
+                              const ok = await deviceHeading.requestPermission()
+                              if (!ok) {
+                                showToast('Для AR нужен компас — разреши доступ к датчикам')
+                                return
+                              }
+                            }
+                            setArMode({ landmark: activeTarget })
+                          }}
+                        >
+                          Найти Нарзанника
+                        </button>
+                      ) : null}
+                      <button
+                        className={`btn ${canDiscoverActiveTarget ? '' : 'btnPrimary'}`}
+                        onClick={() => {
+                          if (!canDiscoverActiveTarget) {
+                            const need = activeTarget.radiusM + accuracyBoostM
+                            showToast(`Нужно подойти ближе: ≤ ${need} м`)
+                            return
+                          }
+                          discover(activeTarget)
+                        }}
+                      >
+                        Открыть цель
+                      </button>
+                    </>
                   ) : (
                     <span className="pill">
                       Статус: <strong>открыто</strong>

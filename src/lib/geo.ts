@@ -33,6 +33,12 @@ export function formatDistance(m: number) {
   return `${(m / 1000).toFixed(2)} км`
 }
 
+/** Разница углов в градусах (-180..180): to - from */
+export function shortestDeltaDeg(from: number, to: number) {
+  const d = ((to % 360) + 360) % 360 - ((from % 360) + 360) % 360
+  return ((d + 540) % 360) - 180
+}
+
 export function bearingDeg(a: { lat: number; lon: number }, b: { lat: number; lon: number }) {
   // 0° = north, 90° = east
   const lat1 = toRad(a.lat)

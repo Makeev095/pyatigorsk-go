@@ -2,6 +2,15 @@ import type { Landmark } from '../types'
 
 export const LANDMARKS: Landmark[] = [
   {
+    id: 'test-narzanik',
+    name: '🧪 Тестовая точка (Нарзанник)',
+    description: 'Точка для проверки AR. Радиус 50 км — можно тестировать из любой точки.',
+    lat: 44.036762,
+    lon: 43.081307,
+    radiusM: 50_000,
+    xp: 10,
+  },
+  {
     id: 'mashuk',
     name: 'Гора Машук',
     description: 'Главная гора Пятигорска и отличная обзорная точка.',
